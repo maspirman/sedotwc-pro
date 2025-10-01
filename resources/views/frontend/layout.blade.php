@@ -494,15 +494,16 @@
         }
 
         /* Navigation */
+        /* Default navbar for non-homepage pages */
         .navbar-custom {
-            background: transparent;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            box-shadow: none;
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             height: 70px;
             padding: 0;
-            border-bottom: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
             position: fixed;
             top: 0;
             left: 0;
@@ -510,7 +511,17 @@
             z-index: 1030;
         }
 
-        .navbar-custom.scrolled {
+        /* Homepage navbar - transparent by default */
+        .navbar-homepage.navbar-custom {
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            box-shadow: none;
+            border-bottom: none;
+        }
+
+        /* Homepage navbar when scrolled */
+        .navbar-homepage.navbar-custom.scrolled {
             background: rgba(255, 255, 255, 0.95);
             -webkit-backdrop-filter: blur(20px);
             backdrop-filter: blur(20px);
@@ -546,12 +557,18 @@
         .brand-main {
             font-size: 1.25rem;
             font-weight: 700;
-            color: rgba(255, 255, 255, 0.95);
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            color: var(--primary-color);
             transition: all 0.4s ease;
         }
 
-        .navbar-custom.scrolled .brand-main {
+        /* Homepage brand - white text */
+        .navbar-homepage .brand-main {
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Homepage brand when scrolled */
+        .navbar-homepage.navbar-custom.scrolled .brand-main {
             color: var(--primary-color);
             text-shadow: none;
         }
@@ -642,12 +659,18 @@
             border-radius: 25px;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            color: rgba(255, 255, 255, 0.9);
+            color: #495057;
             overflow: hidden;
+        }
+
+        /* Homepage navbar - transparent links */
+        .navbar-homepage .nav-link {
+            color: rgba(255, 255, 255, 0.9);
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        .navbar-custom.scrolled .nav-link {
+        /* Homepage navbar when scrolled */
+        .navbar-homepage.navbar-custom.scrolled .nav-link {
             color: #495057;
             text-shadow: none;
         }
@@ -673,17 +696,27 @@
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
         }
 
+        /* Default active state for non-homepage */
         .nav-link.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white !important;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Homepage active state - more subtle */
+        .navbar-homepage .nav-link.active {
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
             color: white !important;
             box-shadow: 0 8px 32px rgba(102, 126, 234, 0.5);
-            transform: translateY(-2px);
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
-        .navbar-custom.scrolled .nav-link.active {
+        /* Homepage active when scrolled */
+        .navbar-homepage.navbar-custom.scrolled .nav-link.active {
             background: linear-gradient(135deg, #667eea, #764ba2);
             box-shadow: 0 8px 32px rgba(102, 126, 234, 0.6);
+            text-shadow: none;
         }
 
         .nav-link.active::before {
@@ -819,16 +852,22 @@
             padding: 8px;
             border-radius: 8px;
             transition: all 0.4s ease;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
         }
 
         .navbar-toggler:focus {
             box-shadow: var(--shadow-sm);
         }
 
-        .navbar-custom.scrolled .navbar-toggler {
+        /* Homepage navbar toggler - semi-transparent */
+        .navbar-homepage .navbar-toggler {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* Homepage navbar toggler when scrolled */
+        .navbar-homepage.navbar-custom.scrolled .navbar-toggler {
             background: rgba(255, 255, 255, 0.9);
         }
 
@@ -837,11 +876,15 @@
             .navbar-custom {
                 height: auto;
                 padding: 8px 0;
+            }
+
+            /* Homepage mobile navbar - transparent */
+            .navbar-homepage.navbar-custom {
                 background: transparent;
             }
 
-            .navbar-custom.scrolled {
-                height: auto;
+            /* Homepage mobile navbar when scrolled */
+            .navbar-homepage.navbar-custom.scrolled {
                 background: rgba(255, 255, 255, 0.95);
                 backdrop-filter: blur(20px);
                 -webkit-backdrop-filter: blur(20px);
@@ -1180,7 +1223,7 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-custom fixed-top pt-2 mb-1">
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top pt-2 mb-1 {{ request()->routeIs('home') ? 'navbar-homepage' : '' }}">
         <div class="container">
             <!-- Logo & Brand -->
             <a class="navbar-brand d-flex align-items-center fw-bold text-primary" href="{{ route('home') }}">
@@ -1428,34 +1471,47 @@
             };
         })();
 
-        // Adjust body padding for fixed navbar
-        // function adjustBodyPadding() {
-        //     const navbar = document.querySelector('.navbar-custom');
-        //     const body = document.body;
-        //     const main = document.querySelector('main');
+        // Adjust body padding for fixed navbar - skip on homepage
+        function adjustBodyPadding() {
+            const navbar = document.querySelector('.navbar-custom');
+            const body = document.body;
+            const main = document.querySelector('main');
+            const isHomepage = navbar && navbar.classList.contains('navbar-homepage');
 
-        //     if (navbar && main) {
-        //         const navbarHeight = navbar.offsetHeight;
-        //         body.style.paddingTop = navbarHeight + 'px';
-        //         main.style.marginTop = '0';
-        //     }
-        // }
+            // Skip padding adjustment on homepage to allow transparent navbar effect
+            if (!isHomepage && navbar && main) {
+                const navbarHeight = navbar.offsetHeight;
+                body.style.paddingTop = navbarHeight + 'px';
+                main.style.marginTop = '0';
+            } else if (isHomepage && body) {
+                // Reset padding on homepage
+                body.style.paddingTop = '0';
+                if (main) {
+                    main.style.marginTop = '0';
+                }
+            }
+        }
 
-        // Navbar scroll effect with smooth transitions
+        // Navbar scroll effect - only for homepage
         let scrollTimeout;
         window.addEventListener('scroll', function() {
             const navbar = document.querySelector('.navbar-custom');
-            const scrolled = window.scrollY > 100;
+            const isHomepage = navbar.classList.contains('navbar-homepage');
 
-            // Debounce scroll event for better performance
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                if (scrolled) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
-                }
-            }, 10);
+            // Only apply scroll effect on homepage
+            if (isHomepage) {
+                const scrolled = window.scrollY > 100;
+
+                // Debounce scroll event for better performance
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    if (scrolled) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                }, 10);
+            }
         });
 
         // Smooth scrolling for anchor links with navbar offset
