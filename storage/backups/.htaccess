@@ -1,0 +1,11 @@
+# Deny access to backup files
+<RequireAll>
+    Require all denied
+</RequireAll>
+
+# Allow access only from localhost
+Require local
+
+# Or allow access only from specific IP (replace with your IP)
+# Require ip 127.0.0.1
+# Require ip ::1

@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Block access to admin area
+Disallow: /admin/
+Disallow: /dashboard
+
+# Block access to sensitive files
+Disallow: /storage/app/
+Disallow: /storage/logs/
+
+# Sitemap
+Sitemap: http://localhost/sedotwc/sitemap.xml
